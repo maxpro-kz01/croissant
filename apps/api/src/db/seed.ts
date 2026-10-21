@@ -5,6 +5,7 @@ import { env } from '../config/env.js';
 import { migrate } from './migrate.js';
 import { createPool, type Db } from './pool.js';
 import { randomId } from '../utils/http.js';
+import { CROISSANT_MENU } from './menu-data.js';
 
 /** Создаёт первого администратора, если пользователей ещё нет. */
 export async function seedAdmin(db: Db) {
@@ -120,6 +121,31 @@ export async function seedDemo(db: Db) {
     `INSERT INTO banners(title_ru,title_kk,text_ru,text_kk,sort) VALUES
      ('Свежие круассаны каждое утро','Таңертең жаңа круассандар','Выпекаем с 8:00, пока ещё тёплые','Сағат 8:00-ден бастап ыстық күйінде',0),
      ('Кофе + десерт','Кофе + тәтті','Любой десерт и кофе — выгоднее вместе','Кез келген тәтті мен кофе — бірге тиімдірек',1)`,
+  );
+  return true;
+}
+
+/** Реальное меню Croissant + 10 столов и акция. Выполняется только если меню пусто. */
+export async function seedCroissant(db: Db) {
+  const { rows } = await db.query('SELECT COUNT(*)::int AS n FROM categories');
+  if (rows[0].n > 0) return false;
+  let cs = 0;
+  for (const cat of CROISSANT_MENU) {
+    const c = (await db.query('INSERT INTO categories(name_ru,name_kk,sort) VALUES ($1,$2,$3) RETURNING id', [cat.ru, cat.kk, cs++])).rows[0];
+    let is = 0;
+    for (const [name, price, desc, flag] of cat.dishes) {
+      await db.query(
+        `INSERT INTO menu_items(category_id,name_ru,name_kk,desc_ru,desc_kk,price,weight,popular,sort) VALUES ($1,$2,$3,$4,$5,$6,'',$7,$8)`,
+        [c.id, name, name, desc ?? '', desc ?? '', price, flag === 'top', is++],
+      );
+    }
+  }
+  for (let n = 1; n <= 10; n++) {
+    await db.query('INSERT INTO tables(number,label,code) VALUES ($1,$2,$3)', [n, '', randomId(8)]);
+  }
+  await db.query(
+    `INSERT INTO banners(title_ru,title_kk,text_ru,text_kk,sort) VALUES
+     ('Акция: фирменный бургер 1990 ₸','Акция: фирменный бургер 1990 ₸','Порция фри в подарок','Тегін фри порциясы',0)`,
   );
   return true;
 }

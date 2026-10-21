@@ -6,12 +6,13 @@ import { createApp } from './app.js';
 import { env } from './config/env.js';
 import { migrate } from './db/migrate.js';
 import { createPool } from './db/pool.js';
-import { seedAdmin } from './db/seed.js';
+import { seedAdmin, seedCroissant } from './db/seed.js';
 import { errorHandler } from './utils/http.js';
 
 const db = createPool();
 await migrate(db);
 await seedAdmin(db);
+if (process.env.SEED_MENU !== '0') await seedCroissant(db); // только если меню пусто
 
 const { app } = createApp({ db });
 
