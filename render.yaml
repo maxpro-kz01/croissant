@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: croissant
+    runtime: node
+    plan: starter # free засыпает; для работающего кафе нужен платный план
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/menu
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: croissant-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PAYMENT_WEBHOOK_SECRET
+        generateValue: true
+      - key: PAYMENT_PROVIDER
+        value: mock
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: PUBLIC_URL
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+
+databases:
+  - name: croissant-db
+    plan: basic-256mb
