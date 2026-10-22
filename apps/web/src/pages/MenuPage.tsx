@@ -210,19 +210,18 @@ function ItemCard({ item, onOpen }: { item: MenuItem; onOpen: (i: MenuItem) => v
   const lang = useApp((s) => s.lang);
   return (
     <button className={`item ${item.available ? '' : 'item--off'}`} disabled={!item.available} onClick={() => onOpen(item)}>
-      <div>
+      <div className="item__pic">
+        {item.image_url ? <img src={item.image_url} alt="" loading="lazy" /> : <Mark />}
+        {item.popular && item.available && <span className="item__star">★</span>}
+      </div>
+      <div className="item__text">
         <div className="item__name">{pick(lang, item, 'name')}</div>
         {pick(lang, item, 'desc') && <p className="item__desc">{pick(lang, item, 'desc')}</p>}
         <div className="item__meta">
           <span className="price">{money(item.price)}</span>
-          {item.weight && <span className="hint">{item.weight}</span>}
           {!item.available && <span className="tag tag--berry">{t('item.unavailable')}</span>}
-          {item.popular && item.available && <span className="tag">★</span>}
+          {item.available && <span className="item__plus">+</span>}
         </div>
-      </div>
-      <div className="item__pic">
-        {item.image_url ? <img src={item.image_url} alt="" loading="lazy" /> : <Mark />}
-        {item.available && <span className="item__plus">+</span>}
       </div>
     </button>
   );

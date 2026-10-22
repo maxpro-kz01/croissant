@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Mark } from '../components/Logo';
 import { Sheet } from '../components/Sheet';
 import { Stepper } from '../components/Stepper';
 import { useT } from '../hooks';
@@ -60,7 +61,7 @@ function ItemBody({ item, onClose }: { item: MenuItem; onClose: () => void }) {
 
   return (
     <>
-      {item.image_url && <img src={item.image_url} alt="" style={{ width: '100%', borderRadius: 16, marginBottom: 12 }} />}
+      <div className="item-hero">{item.image_url ? <img src={item.image_url} alt="" /> : <Mark size={120} />}</div>
       {pick(lang, item, 'desc') && <p style={{ color: 'var(--ink-soft)' }}>{pick(lang, item, 'desc')}</p>}
       {item.weight && <p className="hint" style={{ marginTop: 6 }}>{item.weight}</p>}
 

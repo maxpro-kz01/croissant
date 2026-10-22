@@ -1059,3 +1059,74 @@ a {
   font-size: clamp(26px, 7vw, 38px);
   max-width: 14em;
 }
+
+/* ——— Карточки блюд: белая карточка, фото слева, описание справа; шторка с большим фото ——— */
+.item {
+  grid-template-columns: 116px minmax(0, 1fr);
+  gap: 14px;
+  padding: 12px;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 8px 24px -14px rgba(61, 11, 11, 0.4), 0 0 0 1px var(--line);
+}
+.item__pic {
+  width: 116px;
+  height: auto;
+  min-height: 116px;
+  border-radius: 16px;
+}
+.item__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.item__desc {
+  -webkit-line-clamp: 3;
+}
+.item__meta {
+  margin-top: auto;
+  padding-top: 10px;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+.item__text .price {
+  padding: 6px 14px;
+  border-radius: 12px;
+  background: var(--cream);
+  color: var(--berry);
+  font-size: 17px;
+}
+.item__plus {
+  position: static;
+  flex: none;
+  width: 38px;
+  height: 38px;
+}
+.item__star {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--berry);
+  color: var(--on-brand);
+  font-size: 12px;
+}
+.item-hero {
+  margin: 0 -20px 16px;
+  aspect-ratio: 4 / 3;
+  max-height: 46dvh;
+  background: var(--cream);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.item-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.item-hero .mark {
+  color: var(--berry);
+  opacity: 0.35;
+}
