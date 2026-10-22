@@ -74,7 +74,7 @@ export function MenuPage() {
               ))}
             </div>
           </div>
-          <img className="hero__logo" src="/logo-cream.png" alt="Croissant — cakes and coffee" width={960} height={459} />
+          <img className="hero__logo" src="/logo-brand.png" alt="Croissant — cakes and coffee" width={960} height={459} />
           <div className="hero__body">
             <div>
               <h1 className="hero__title">{t('hero.title')}</h1>
