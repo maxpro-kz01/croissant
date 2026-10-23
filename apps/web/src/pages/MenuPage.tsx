@@ -114,7 +114,7 @@ export function MenuPage() {
           </p>
         )}
 
-        {!q && <img className="promo" src="/banners/promo.jpg" alt="Акция: фирменный бургер 1990 ₸, порция фри в подарок" width={1080} height={314} />}
+        {!q && <img className="promo" src="/banners/promo-burger.jpg" alt="Акция: фирменный бургер 1990 ₸, порция фри в подарок" width={1080} height={314} />}
       </main>
 
       {data && (
