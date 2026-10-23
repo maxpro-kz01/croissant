@@ -56,7 +56,9 @@ export async function createOrder(db: Db, hub: Hub, input: OrderInput) {
   if (!isOpenNow(settings.hours)) {
     throw new HttpError(409, `Closed. Working hours ${settings.hours.open}–${settings.hours.close}`, 'closed');
   }
-  if (!settings.payments[input.payment_method]) throw new HttpError(400, 'Payment method is disabled', 'payment_disabled');
+  // «К столу»: без онлайн-оплаты, платят в заведении
+  if (input.type === 'dine_in') input = { ...input, payment_method: 'cash' };
+  if (!settings.payments[input.payment_method] && input.type !== 'dine_in') throw new HttpError(400, 'Payment method is disabled', 'payment_disabled');
 
   let tableId: number | null = null;
   let tableNumber: number | null = null;

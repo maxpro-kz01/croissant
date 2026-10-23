@@ -1327,3 +1327,21 @@ a {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* ——— Баннер акции (картинка) и компактные отступы ——— */
+.promo {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 8px 0 0;
+  border-radius: 20px;
+}
+.hero {
+  padding-bottom: 6px;
+}
+.hero .modes {
+  margin-top: 10px;
+}
+.menu-top {
+  margin-top: 10px !important;
+}

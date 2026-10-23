@@ -80,7 +80,7 @@ export function CheckoutPage() {
         phone: phone.trim(),
         address: mode === 'delivery' ? { street: street.trim(), house: house.trim(), apt: apt.trim(), landmark: landmark.trim() } : undefined,
         comment: comment.trim(),
-        payment_method: chosen,
+        payment_method: mode === 'dine_in' ? 'cash' : chosen,
         lang,
         scheduled_for: isHome && later && time ? toIso(time) : undefined,
         items: cart.map((l) => ({ item_id: l.item_id, qty: l.qty, modifier_ids: l.modifier_ids, comment: l.comment })),
@@ -197,6 +197,7 @@ export function CheckoutPage() {
             </div>
           )}
 
+          {mode !== 'dine_in' && (
           <div className="card">
             <h2>{t('checkout.payment')}</h2>
             <div className="pays" role="radiogroup">
@@ -208,6 +209,7 @@ export function CheckoutPage() {
               ))}
             </div>
           </div>
+          )}
 
           <div className="card">
             <div className="totals" style={{ paddingTop: 0 }}>

@@ -128,16 +128,7 @@ export function MenuPage() {
           </p>
         )}
 
-        {data && data.banners.length > 0 && !q && (
-          <div className="banners" style={{ marginTop: 18 }}>
-            {data.banners.map((b) => (
-              <article className="banner" key={b.id}>
-                <h3>{pick(lang, b, 'title')}</h3>
-                {pick(lang, b, 'text') && <p>{pick(lang, b, 'text')}</p>}
-              </article>
-            ))}
-          </div>
-        )}
+        {!q && <img className="promo" src="/banners/promo.jpg" alt="Акция: фирменный бургер 1990 ₸, порция фри в подарок" width={988} height={551} />}
       </main>
 
       {data && (
