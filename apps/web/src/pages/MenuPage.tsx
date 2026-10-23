@@ -13,7 +13,7 @@ import { ItemSheet } from './ItemSheet';
 export function MenuPage() {
   const t = useT();
   const { data, error, reload } = useMenu();
-  const { lang, setLang, mode, setMode, tableCode, tableNumber, setTable, setTableNumber, cart } = useApp();
+  const { lang, setLang, mode, setMode, tableCode, tableNumber, setTable, cart } = useApp();
   const [query, setQuery] = useState('');
   const [active, setActive] = useState<number | null>(null);
   const [item, setItem] = useState<MenuItem | null>(null);
@@ -94,20 +94,6 @@ export function MenuPage() {
                     </button>
                   ))}
                 </div>
-                {mode === 'dine_in' && (
-                  <label className="table-pick">
-                    <span>{t('table.pick')}</span>
-                    <input
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      maxLength={3}
-                      placeholder="1"
-                      value={tableNumber ?? ''}
-                      onChange={(e) => setTableNumber(e.target.value.replace(/\D/g, '') ? Number(e.target.value.replace(/\D/g, '')) : null)}
-                    />
-                    <small>{t('table.pick_hint')}</small>
-                  </label>
-                )}
               </>
             )
           )}
@@ -128,7 +114,7 @@ export function MenuPage() {
           </p>
         )}
 
-        {!q && <img className="promo" src="/banners/promo.jpg" alt="Акция: фирменный бургер 1990 ₸, порция фри в подарок" width={988} height={551} />}
+        {!q && <img className="promo" src="/banners/promo.jpg" alt="Акция: фирменный бургер 1990 ₸, порция фри в подарок" width={1080} height={314} />}
       </main>
 
       {data && (
