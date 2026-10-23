@@ -1221,3 +1221,18 @@ a {
 .item-hero img {
   object-position: center 55%;
 }
+
+/* Квадратные фото блюд */
+.item-hero {
+  aspect-ratio: 1 / 1;
+  max-height: 52dvh;
+}
+.item-hero img {
+  object-position: center;
+}
+.item__pic {
+  align-self: start;
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 1 / 1;
+}
