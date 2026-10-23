@@ -1346,10 +1346,8 @@ a {
   margin-top: 10px !important;
 }
 
-/* Баннер акции: высота на ~1 см ниже (картинка обрезается по краям сверху и снизу) */
-.promo {
-  height: calc((100vw - 32px) * 0.291 - 38px);
-  max-height: 160px;
-  object-fit: cover;
-  object-position: center;
+/* Карусель сверху: высота на 1 см (~38px) ниже */
+.hero .slider {
+  aspect-ratio: auto;
+  height: calc((min(100vw, 760px) - 32px) * 0.625 - 38px);
 }
