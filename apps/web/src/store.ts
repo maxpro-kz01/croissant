@@ -11,6 +11,7 @@ interface AppState {
   setLang: (l: Lang) => void;
   setMode: (m: OrderType) => void;
   setTable: (code: string | null, number: number | null) => void;
+  setTableNumber: (number: number | null) => void;
   addLine: (line: Omit<CartLine, 'key'>) => void;
   changeQty: (key: string, delta: number) => void;
   clearCart: () => void;
@@ -39,6 +40,7 @@ export const useApp = create<AppState>()(
       setMode: (mode) => set({ mode }),
       setTable: (tableCode, tableNumber) =>
         set(tableCode ? { tableCode, tableNumber, mode: 'dine_in' } : { tableCode: null, tableNumber: null, mode: 'pickup' }),
+      setTableNumber: (tableNumber) => set({ tableNumber }),
       addLine: (line) =>
         set((s) => {
           const key = lineKey(line);

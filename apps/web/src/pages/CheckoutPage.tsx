@@ -15,7 +15,7 @@ const ERR_KEYS: Record<string, string> = {
   phone_required: 'err.phone_required',
   address_required: 'err.address_required',
   table_unknown: 'err.table_unknown',
-  table_required: 'err.table_unknown',
+  table_required: 'err.table_required',
   payment_disabled: 'err.payment_disabled',
 };
 
@@ -32,7 +32,7 @@ export function CheckoutPage() {
   const t = useT();
   const navigate = useNavigate();
   const { data } = useMenu();
-  const { cart, lang, mode, tableCode, tableNumber, clearCart } = useApp();
+  const { cart, lang, mode, tableCode, tableNumber, setTableNumber, clearCart } = useApp();
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -65,12 +65,17 @@ export function CheckoutPage() {
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!chosen) return;
+    if (mode === 'dine_in' && !tableCode && !tableNumber) {
+      setError(t('err.table_required'));
+      return;
+    }
     setError('');
     setBusy(true);
     try {
       const order = await api.post<PlacedOrder>('/api/orders', {
         type: mode,
         table_code: mode === 'dine_in' ? tableCode ?? undefined : undefined,
+        table_number: mode === 'dine_in' && !tableCode ? tableNumber ?? undefined : undefined,
         customer_name: name.trim(),
         phone: phone.trim(),
         address: mode === 'delivery' ? { street: street.trim(), house: house.trim(), apt: apt.trim(), landmark: landmark.trim() } : undefined,
@@ -114,6 +119,19 @@ export function CheckoutPage() {
         <form onSubmit={submit}>
           <div className="card">
             <h2>{mode === 'dine_in' ? t('checkout.at_table', { n: tableNumber ?? '' }) : t(`mode.${mode}`)}</h2>
+            {mode === 'dine_in' && !tableCode && (
+              <label className="field">
+                <span>{t('table.pick')}</span>
+                <input
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={3}
+                  required
+                  value={tableNumber ?? ''}
+                  onChange={(e) => setTableNumber(e.target.value.replace(/\D/g, '') ? Number(e.target.value.replace(/\D/g, '')) : null)}
+                />
+              </label>
+            )}
             <label className="field">
               <span>{t('checkout.name')}</span>
               <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" maxLength={80} />

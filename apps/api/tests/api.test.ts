@@ -77,6 +77,14 @@ describe('orders', () => {
     await c.http.post('/api/orders').send({ ...base, table_code: 'nope' }).expect(400);
   });
 
+  it('зал без QR: заказ по номеру стола, несуществующий стол — ошибка', async () => {
+    const cro = await item('Круассан классический');
+    const base = { type: 'dine_in', payment_method: 'cash', items: [{ item_id: cro.id, qty: 1 }] };
+    const ok = await c.http.post('/api/orders').send({ ...base, table_number: 2 }).expect(201);
+    expect(ok.body.whatsapp.text).toContain('Стол 2');
+    await c.http.post('/api/orders').send({ ...base, table_number: 999 }).expect(400);
+  });
+
   it('доставка: нужен адрес и телефон, минимальная сумма, стоимость доставки', async () => {
     const cro = await item('Круассан классический');
     const tiramisu = await item('Тирамису');

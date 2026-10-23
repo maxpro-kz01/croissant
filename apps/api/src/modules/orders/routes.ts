@@ -14,6 +14,7 @@ const TZ = 'Asia/Qyzylorda';
 const orderSchema = z.object({
   type: z.enum(['dine_in', 'delivery', 'pickup']),
   table_code: z.string().max(40).optional(),
+  table_number: z.number().int().min(1).max(999).optional(), // заказ «к столу» без QR
   customer_name: z.string().max(80).default(''),
   phone: z.string().max(30).default(''),
   address: z
@@ -60,8 +61,12 @@ export async function createOrder(db: Db, hub: Hub, input: OrderInput) {
   let tableId: number | null = null;
   let tableNumber: number | null = null;
   if (input.type === 'dine_in') {
-    if (!input.table_code) throw new HttpError(400, 'Table code is required', 'table_required');
-    const t = (await db.query('SELECT id, number FROM tables WHERE code = $1', [input.table_code])).rows[0];
+    if (!input.table_code && !input.table_number) throw new HttpError(400, 'Table is required', 'table_required');
+    const t = (
+      input.table_code
+        ? await db.query('SELECT id, number FROM tables WHERE code = $1', [input.table_code])
+        : await db.query('SELECT id, number FROM tables WHERE number = $1', [input.table_number])
+    ).rows[0];
     if (!t) throw new HttpError(400, 'Unknown table', 'table_unknown');
     tableId = t.id;
     tableNumber = t.number;

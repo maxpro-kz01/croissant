@@ -13,7 +13,7 @@ import { ItemSheet } from './ItemSheet';
 export function MenuPage() {
   const t = useT();
   const { data, error, reload } = useMenu();
-  const { lang, setLang, mode, setMode, tableCode, tableNumber, setTable, cart } = useApp();
+  const { lang, setLang, mode, setMode, tableCode, tableNumber, setTable, setTableNumber, cart } = useApp();
   const [query, setQuery] = useState('');
   const [active, setActive] = useState<number | null>(null);
   const [item, setItem] = useState<MenuItem | null>(null);
@@ -26,6 +26,7 @@ export function MenuPage() {
     const m: OrderType[] = [];
     if (!settings || settings.delivery.enabled) m.push('delivery');
     if (!settings || settings.pickup_enabled) m.push('pickup');
+    m.push('dine_in'); // «К столу»: заказ внутри заведения
     return m;
   }, [tableCode, settings]);
 
@@ -76,12 +77,7 @@ export function MenuPage() {
             </div>
           </div>
           <HeroBanner />
-          <div className="hero__body">
-            <div>
-              <h1 className="hero__title">{t('hero.title')}</h1>
-              <p className="hero__sub">{t('hero.sub')}</p>
-            </div>
-          </div>
+          <h1 className="sr">Croissant</h1>
 
           {tableCode ? (
             <div className="table-chip">
@@ -90,13 +86,29 @@ export function MenuPage() {
             </div>
           ) : (
             modes.length > 1 && (
-              <div className="modes" role="group" aria-label={t('checkout.when')}>
-                {modes.map((m) => (
-                  <button key={m} aria-pressed={mode === m} onClick={() => setMode(m)}>
-                    {t(`mode.${m}`)}
-                  </button>
-                ))}
-              </div>
+              <>
+                <div className="modes" role="group" aria-label={t('checkout.when')}>
+                  {modes.map((m) => (
+                    <button key={m} aria-pressed={mode === m} onClick={() => setMode(m)}>
+                      {t(`mode.${m}`)}
+                    </button>
+                  ))}
+                </div>
+                {mode === 'dine_in' && (
+                  <label className="table-pick">
+                    <span>{t('table.pick')}</span>
+                    <input
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={3}
+                      placeholder="1"
+                      value={tableNumber ?? ''}
+                      onChange={(e) => setTableNumber(e.target.value.replace(/\D/g, '') ? Number(e.target.value.replace(/\D/g, '')) : null)}
+                    />
+                    <small>{t('table.pick_hint')}</small>
+                  </label>
+                )}
+              </>
             )
           )}
 

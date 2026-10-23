@@ -3,7 +3,7 @@ services:
     name: croissant
     runtime: node
     plan: starter # free засыпает; для работающего кафе нужен платный план
-    buildCommand: npm ci --include=dev && npm run build
+    buildCommand: npm ci && npm run build
     startCommand: npm run start
     healthCheckPath: /api/menu
     envVars:
