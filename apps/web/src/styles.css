@@ -1236,3 +1236,58 @@ a {
   min-height: 0;
   aspect-ratio: 1 / 1;
 }
+
+/* ——— Логотип в левом углу и баннер с фото ——— */
+.topbar .hero__logo {
+  width: 104px;
+  height: auto;
+  margin: 0;
+  animation: none;
+}
+.hero__title {
+  font-size: clamp(22px, 6vw, 30px);
+}
+.slider {
+  position: relative;
+  margin-top: 14px;
+  aspect-ratio: 16 / 10;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--cream);
+  touch-action: pan-y;
+}
+.slider__track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s var(--ease);
+}
+.slider__track img {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+.slider__dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+.slider__dots button {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+  transition: width 0.3s var(--ease), background 0.3s;
+}
+.slider__dots button[aria-current='true'] {
+  width: 22px;
+  border-radius: 4px;
+  background: #fff;
+}

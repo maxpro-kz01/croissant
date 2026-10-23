@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { HeroBanner } from '../components/HeroBanner';
 import { Mark } from '../components/Logo';
 import { Link } from 'react-router-dom';
 
@@ -65,7 +66,7 @@ export function MenuPage() {
       <header className="hero">
         <div className="wrap">
           <div className="topbar">
-            <span />
+            <img className="hero__logo" src="/logo-brand.png" alt="Croissant — cakes and coffee" width={104} height={50} />
             <div className="lang" role="group" aria-label="Language">
               {(['ru', 'kk'] as const).map((l) => (
                 <button key={l} aria-pressed={lang === l} onClick={() => setLang(l)}>
@@ -74,7 +75,7 @@ export function MenuPage() {
               ))}
             </div>
           </div>
-          <img className="hero__logo" src="/logo-brand.png" alt="Croissant — cakes and coffee" width={960} height={459} />
+          <HeroBanner />
           <div className="hero__body">
             <div>
               <h1 className="hero__title">{t('hero.title')}</h1>
