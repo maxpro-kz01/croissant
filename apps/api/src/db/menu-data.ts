@@ -245,3 +245,16 @@ export const CROISSANT_MENU: MenuCategory[] = [
     ],
   },
 ];
+
+/** Фото блюд: название в меню -> файл в apps/web/public/menu. Проставляются, только если у блюда ещё нет фото. */
+export const DISH_IMAGES: Record<string, string> = {
+  'Завтрак по-Турецки': '/menu/turkish.jpg',
+  'Завтрак по-Английски': '/menu/english.jpg',
+  'Завтрак по-Норвежски': '/menu/norwegian.jpg',
+  'Омлет с курицей и грибами': '/menu/omelet-chicken.jpg',
+  'Омлет черри с круассаном': '/menu/omelet-cherry.jpg',
+  'Сырники из обезжиренного творога': '/menu/syrniki.jpg',
+  'Блины с творогом, бананом и клубникой': '/menu/blini-berry.jpg',
+  'Блинчики с мясом в грибном соусе': '/menu/crepes-meat.jpg',
+  'Блинчики с курицей в грибном соусе': '/menu/crepes-chicken.jpg',
+};

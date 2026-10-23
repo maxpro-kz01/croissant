@@ -5,7 +5,7 @@ import { env } from '../config/env.js';
 import { migrate } from './migrate.js';
 import { createPool, type Db } from './pool.js';
 import { randomId } from '../utils/http.js';
-import { CROISSANT_MENU } from './menu-data.js';
+import { CROISSANT_MENU, DISH_IMAGES } from './menu-data.js';
 
 /** Создаёт первого администратора, если пользователей ещё нет. */
 export async function seedAdmin(db: Db) {
@@ -148,6 +148,13 @@ export async function seedCroissant(db: Db) {
      ('Акция: фирменный бургер 1990 ₸','Акция: фирменный бургер 1990 ₸','Порция фри в подарок','Тегін фри порциясы',0)`,
   );
   return true;
+}
+
+/** Проставляет фото блюдам, у которых его ещё нет (фото, загруженные в админке, не трогаем). */
+export async function syncMenuImages(db: Db) {
+  for (const [name, url] of Object.entries(DISH_IMAGES)) {
+    await db.query(`UPDATE menu_items SET image_url=$1 WHERE name_ru=$2 AND (image_url IS NULL OR image_url='')`, [url, name]);
+  }
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {

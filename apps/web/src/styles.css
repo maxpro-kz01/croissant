@@ -1217,3 +1217,7 @@ a {
 .tbl--busy {
   background: #f7ecea;
 }
+
+.item-hero img {
+  object-position: center 55%;
+}
