@@ -157,6 +157,31 @@ export async function syncMenuImages(db: Db) {
   }
 }
 
+/** Столы кафе: 14 столов с названиями зон. Названия проставляются, только если ещё пусты (правки из админки не трогаем). */
+export const CROISSANT_TABLES: Record<number, string> = {
+  1: 'Столик на двоих',
+  2: 'Столик на двоих',
+  3: 'Столик на двоих',
+  4: 'Столик на 6 человек',
+  5: 'Столик на 6 человек',
+  6: 'Столик на 6 человек',
+  7: 'Столик на 6 человек',
+  8: 'Столик на 6 человек',
+  9: 'Столик на 6 человек',
+  10: 'Столик у лестницы',
+  11: 'Столик у лестницы',
+  12: 'Большой стол',
+  13: 'Стол у стойки',
+  14: 'Стол у стойки',
+};
+
+export async function syncTables(db: Db) {
+  for (const [n, label] of Object.entries(CROISSANT_TABLES)) {
+    await db.query('INSERT INTO tables(number,label,code) VALUES ($1,$2,$3) ON CONFLICT (number) DO NOTHING', [Number(n), label, randomId(8)]);
+    await db.query(`UPDATE tables SET label=$2 WHERE number=$1 AND label=''`, [Number(n), label]);
+  }
+}
+
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   const db = createPool();
   migrate(db)
