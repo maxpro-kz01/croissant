@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": "apps/web/dist",
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://croissant-6g3r.onrender.com/api/:path*" },
+    { "source": "/((?!assets/|menu/|banners/|icon|logo|manifest).*)", "destination": "/index.html" }
+  ]
+}
