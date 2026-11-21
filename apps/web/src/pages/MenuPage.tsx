@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { HeroBanner } from '../components/HeroBanner';
 import { Mark } from '../components/Logo';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useMenu, useT } from '../hooks';
 import { money, pick } from '../i18n';
@@ -19,6 +19,19 @@ export function MenuPage() {
   const [item, setItem] = useState<MenuItem | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const sections = useRef<Record<number, HTMLElement | null>>({});
+  const navigate = useNavigate();
+
+  // Двойной тап по логотипу открывает вход в админку (дальше нужен пароль).
+  const lastLogoTap = useRef(0);
+  const onLogoTap = () => {
+    const now = Date.now();
+    if (now - lastLogoTap.current < 450) {
+      lastLogoTap.current = 0;
+      navigate('/admin');
+    } else {
+      lastLogoTap.current = now;
+    }
+  };
 
   const settings = data?.settings ?? null;
   const modes = useMemo<OrderType[]>(() => {
@@ -67,7 +80,15 @@ export function MenuPage() {
       <header className="hero">
         <div className="wrap">
           <div className="topbar">
-            <img className="hero__logo" src="/logo-brand.png" alt="Croissant — cakes and coffee" width={104} height={50} />
+            <img
+              className="hero__logo"
+              src="/logo-brand.png"
+              alt="Croissant — cakes and coffee"
+              width={104}
+              height={50}
+              onClick={onLogoTap}
+              draggable={false}
+            />
             <div className="lang" role="group" aria-label="Language">
               {(['ru', 'kk'] as const).map((l) => (
                 <button key={l} aria-pressed={lang === l} onClick={() => setLang(l)}>

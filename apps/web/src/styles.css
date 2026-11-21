@@ -1351,3 +1351,6 @@ a {
   aspect-ratio: auto;
   height: calc((min(100vw, 760px) - 32px) * 0.625 - 38px);
 }
+
+/* Логотип: двойной тап открывает вход в админку, без зума и подсветки */
+.hero__logo{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
