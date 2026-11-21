@@ -34,17 +34,21 @@ describe('menu', () => {
 });
 
 describe('напитки', () => {
-  it('syncDrinks добавляет 18 позиций один раз, у чая есть выбор объёма', async () => {
+  it('syncDrinks добавляет 18+18 позиций один раз, у чая и лимонадов есть выбор объёма', async () => {
     await syncDrinks(c.db);
     await syncDrinks(c.db);
     const n = (await c.db.query(`SELECT count(*)::int AS n FROM menu_items WHERE image_url LIKE '/menu/drinks/%'`)).rows[0].n;
-    expect(n).toBe(18);
+    expect(n).toBe(36);
     const r = await c.http.get('/api/menu').expect(200);
     const items = r.body.categories.flatMap((x: any) => x.items);
     const tea = items.find((i: any) => i.name_ru === 'Масала');
     expect(tea.price).toBe(1190);
     expect(tea.groups[0].modifiers.map((m: any) => m.price_delta)).toEqual([0, 1200]);
     expect(items.find((i: any) => i.name_ru === 'Тоник').groups[0].modifiers).toHaveLength(3);
+    const mojito = items.find((i: any) => i.name_ru === 'Клубничный мохито');
+    expect(mojito.price).toBe(1390);
+    expect(mojito.groups[0].modifiers.map((m: any) => m.price_delta)).toEqual([0, 1200]);
+    expect(items.find((i: any) => i.name_ru === 'Juicy ball тропик').weight).toBe('0,4 л');
   });
 });
 

@@ -26,6 +26,14 @@ const tea = (name: string, small: number, big: number, image: string): Drink => 
   group: { ru: 'Объём', kk: 'Көлемі', options: teaSize(big - small) },
 });
 
+/** Напиток одного объёма 0,4 л (без выбора). */
+const small = (name: string, price: number, image: string): Drink => ({
+  name,
+  price,
+  weight: '0,4 л',
+  image: `/menu/drinks/${image}.jpg`,
+});
+
 export const CROISSANT_DRINKS: DrinkCategory[] = [
   {
     ru: 'Раф',
@@ -70,6 +78,15 @@ export const CROISSANT_DRINKS: DrinkCategory[] = [
     ],
   },
   {
+    ru: 'Матча',
+    kk: 'Матча',
+    items: [
+      { name: 'Матча айс голубая', price: 1890, image: '/menu/drinks/matcha-ice-blue.jpg' },
+      { name: 'Матча голубая', price: 1390, image: '/menu/drinks/matcha-blue.jpg' },
+      { name: 'Матча айс кокос', price: 2290, image: '/menu/drinks/matcha-ice-coconut.jpg' },
+    ],
+  },
+  {
     ru: 'Чай',
     kk: 'Шай',
     items: [
@@ -79,11 +96,50 @@ export const CROISSANT_DRINKS: DrinkCategory[] = [
       tea('Карак чай', 1190, 2390, 'tea-karak'),
       tea('Яблоко-киви чай', 990, 1890, 'tea-apple-kiwi'),
       tea('Тропический чай', 990, 1890, 'tea-tropical'),
+      tea('Марокканский чай', 990, 1890, 'tea-moroccan'),
+      tea('Глинтвейн', 990, 1890, 'tea-glintwein'),
+    ],
+  },
+  {
+    ru: 'Лимонады',
+    kk: 'Лимонадтар',
+    items: [
+      tea('Клубничный мохито', 1390, 2590, 'lemonade-strawberry-mojito'),
+      tea('Ягодный лимонад', 1390, 2590, 'lemonade-berry'),
+      tea('Чиа маракуя', 1390, 2590, 'lemonade-chia-passion'),
+    ],
+  },
+  {
+    ru: 'Фруктовые напитки',
+    kk: 'Жеміс сусындары',
+    items: [small('Ягодный с мороженым', 2190, 'fruit-berry-icecream')],
+  },
+  {
+    ru: 'Милкшейки',
+    kk: 'Милкшейктер',
+    items: [
+      small('Милкшейк орео', 1990, 'milkshake-oreo'),
+      small('Милкшейк клубничный орео', 1990, 'milkshake-strawberry-oreo'),
     ],
   },
   {
     ru: 'Смузи',
     kk: 'Смузи',
-    items: [{ name: 'Смузи ПП', price: 2290, image: '/menu/drinks/smoothie-pp.jpg' }],
+    items: [
+      { name: 'Смузи ПП', price: 2290, image: '/menu/drinks/smoothie-pp.jpg' },
+      small('Смузи ягодный', 2290, 'smoothie-berry'),
+      small('Смузи банан-киви', 1990, 'smoothie-banana-kiwi'),
+    ],
+  },
+  {
+    ru: 'Juicy ball',
+    kk: 'Juicy ball',
+    items: [
+      small('Juicy ball гранат', 1890, 'juicy-pomegranate'),
+      small('Juicy ball ягодный', 1890, 'juicy-berry'),
+      small('Juicy ball гранат №2', 1890, 'juicy-pomegranate-2'),
+      small('Juicy ball цитрус', 1890, 'juicy-citrus'),
+      small('Juicy ball тропик', 1890, 'juicy-tropic'),
+    ],
   },
 ];
