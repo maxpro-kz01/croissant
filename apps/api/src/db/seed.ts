@@ -5,6 +5,7 @@ import { env } from '../config/env.js';
 import { migrate } from './migrate.js';
 import { createPool, type Db } from './pool.js';
 import { randomId } from '../utils/http.js';
+import { CROISSANT_DRINKS } from './drinks-data.js';
 import { CROISSANT_MENU, DISH_IMAGES } from './menu-data.js';
 
 /** Создаёт первого администратора, если пользователей ещё нет. */
@@ -179,6 +180,43 @@ export async function syncTables(db: Db) {
   for (const [n, label] of Object.entries(CROISSANT_TABLES)) {
     await db.query('INSERT INTO tables(number,label,code) VALUES ($1,$2,$3) ON CONFLICT (number) DO NOTHING', [Number(n), label, randomId(8)]);
     await db.query(`UPDATE tables SET label=$2 WHERE number=$1 AND label=''`, [Number(n), label]);
+  }
+}
+
+/**
+ * Добавляет напитки в меню: категории и позиции, которых ещё нет (по названию).
+ * Существующие позиции и правки из админки не трогаем; фото ставим, только если пусто.
+ */
+export async function syncDrinks(db: Db) {
+  let sort = Number((await db.query('SELECT COALESCE(MAX(sort), 0) AS m FROM categories')).rows[0].m);
+  for (const cat of CROISSANT_DRINKS) {
+    let catRow = (await db.query('SELECT id FROM categories WHERE name_ru=$1', [cat.ru])).rows[0];
+    if (!catRow) {
+      catRow = (await db.query('INSERT INTO categories(name_ru,name_kk,sort) VALUES ($1,$2,$3) RETURNING id', [cat.ru, cat.kk, ++sort])).rows[0];
+    }
+    let is = Number((await db.query('SELECT COALESCE(MAX(sort), 0) AS m FROM menu_items WHERE category_id=$1', [catRow.id])).rows[0].m);
+    for (const d of cat.items) {
+      const found = (await db.query('SELECT id FROM menu_items WHERE name_ru=$1', [d.name])).rows[0];
+      if (found) {
+        await db.query(`UPDATE menu_items SET image_url=$1 WHERE id=$2 AND (image_url IS NULL OR image_url='')`, [d.image, found.id]);
+        continue;
+      }
+      const row = (
+        await db.query(
+          `INSERT INTO menu_items(category_id,name_ru,name_kk,price,weight,image_url,sort) VALUES ($1,$2,$2,$3,$4,$5,$6) RETURNING id`,
+          [catRow.id, d.name, d.price, d.weight ?? '', d.image, ++is],
+        )
+      ).rows[0];
+      if (d.group) {
+        const g = (
+          await db.query(`INSERT INTO modifier_groups(item_id,name_ru,name_kk,required,multi,sort) VALUES ($1,$2,$3,true,false,0) RETURNING id`, [row.id, d.group.ru, d.group.kk])
+        ).rows[0];
+        let ms = 0;
+        for (const o of d.group.options) {
+          await db.query(`INSERT INTO modifiers(group_id,name_ru,name_kk,price_delta,sort) VALUES ($1,$2,$3,$4,$5)`, [g.id, o.ru, o.kk, o.delta, ms++]);
+        }
+      }
+    }
   }
 }
 

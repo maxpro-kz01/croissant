@@ -6,7 +6,7 @@ import { createApp } from './app.js';
 import { env } from './config/env.js';
 import { migrate } from './db/migrate.js';
 import { createPool } from './db/pool.js';
-import { seedAdmin, seedCroissant, syncMenuImages, syncTables } from './db/seed.js';
+import { seedAdmin, seedCroissant, syncDrinks, syncMenuImages, syncTables } from './db/seed.js';
 import { errorHandler } from './utils/http.js';
 
 const db = createPool();
@@ -15,6 +15,7 @@ await seedAdmin(db);
 if (process.env.SEED_MENU !== '0') await seedCroissant(db); // только если меню пусто
 await syncMenuImages(db);
 if (process.env.SEED_MENU !== '0') await syncTables(db);
+if (process.env.SEED_MENU !== '0') await syncDrinks(db);
 
 const { app } = createApp({ db });
 
