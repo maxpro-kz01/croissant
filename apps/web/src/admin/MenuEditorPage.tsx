@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { api } from '../api';
 import { money } from '../i18n';
 import type { Banner, Category, MenuItem } from '../types';
+import { ImageField, PhotoPicker } from './ImageField';
 import { errMsg, useLoad } from './useStream';
 
 interface ModDraft {
@@ -154,6 +155,13 @@ export function MenuEditorPage() {
                 aria-label={`В наличии: ${i.name_ru}`}
                 onClick={() => run(() => api.patch(`/api/admin/items/${i.id}/availability`, { available: !i.available }))}
               />
+              <PhotoPicker
+                className="row-thumb"
+                onUploaded={(url) => void run(() => api.put(`/api/admin/items/${i.id}`, { ...toDraft(i), image_url: url }))}
+                onError={setError}
+              >
+                {(busy) => (busy ? <span className="row-thumb__busy">…</span> : i.image_url ? <img src={i.image_url} alt={`Заменить фото: ${i.name_ru}`} /> : <span aria-label={`Добавить фото: ${i.name_ru}`}>📷</span>)}
+              </PhotoPicker>
               <div className="grow">
                 <b>{i.name_ru}</b> {i.popular && '★'}
                 <div className="hint">
@@ -290,14 +298,11 @@ function ItemModal({
             <input value={d.weight} onChange={(e) => set('weight', e.target.value)} placeholder="250 мл" />
           </label>
           <label className="field">
-            <span>Ссылка на фото</span>
-            <input value={d.image_url} onChange={(e) => set('image_url', e.target.value)} placeholder="https://…" />
-          </label>
-          <label className="field">
             <span>Порядок (меньше — выше)</span>
             <input type="number" value={d.sort} onChange={(e) => set('sort', Math.round(Number(e.target.value)))} />
           </label>
         </div>
+        <ImageField value={d.image_url} onChange={(u) => set('image_url', u)} />
         <label className="check">
           <input type="checkbox" checked={d.available} onChange={(e) => set('available', e.target.checked)} /> В наличии
         </label>

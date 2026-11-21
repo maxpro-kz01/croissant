@@ -52,6 +52,40 @@ describe('напитки', () => {
   });
 });
 
+describe('фото из админки', () => {
+  const png = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(32)]);
+
+  it('загружает только админ и только картинки, отдаёт с долгим кэшем', async () => {
+    await c.http.post('/api/admin/images').set('Content-Type', 'image/png').send(png).expect(401);
+    await c.http.post('/api/admin/images').set(auth(c.adminToken)).set('Content-Type', 'image/png').send(Buffer.from('<script>alert(1)</script>')).expect(400);
+    const up = await c.http.post('/api/admin/images').set(auth(c.adminToken)).set('Content-Type', 'image/png').send(png).expect(201);
+    expect(up.body.url).toMatch(/^\/api\/images\/[0-9a-f-]{36}$/);
+    const got = await c.http.get(up.body.url).expect(200);
+    expect(got.headers['content-type']).toBe('image/png');
+    expect(got.headers['cache-control']).toContain('immutable');
+    await c.http.get('/api/images/00000000-0000-0000-0000-000000000000').expect(404);
+    await c.http.get('/api/images/not-an-id').expect(404);
+  });
+
+  it('слишком большой файл отклоняется понятной ошибкой 413', async () => {
+    const big = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(4 * 1024 * 1024)]);
+    const r = await c.http.post('/api/admin/images').set(auth(c.adminToken)).set('Content-Type', 'image/png').send(big).expect(413);
+    expect(r.body.code).toBe('too_large');
+  });
+
+  it('загруженное фото можно поставить блюду и оно видно в меню', async () => {
+    const up = await c.http.post('/api/admin/images').set(auth(c.adminToken)).set('Content-Type', 'image/png').send(png).expect(201);
+    const cap = await item('Круассан классический');
+    const full = (await c.http.get('/api/admin/menu').set(auth(c.adminToken)).expect(200)).body.categories
+      .flatMap((x: any) => x.items)
+      .find((i: any) => i.id === cap.id);
+    await c.http.put(`/api/admin/items/${cap.id}`).set(auth(c.adminToken)).send({ ...full, image_url: up.body.url }).expect(200);
+    const menu = await c.http.get('/api/menu').expect(200);
+    const seen = menu.body.categories.flatMap((x: any) => x.items).find((i: any) => i.id === cap.id);
+    expect(seen.image_url).toBe(up.body.url);
+  });
+});
+
 describe('orders', () => {
   it('заказ в зале: цена считается на сервере, есть текст и ссылка WhatsApp', async () => {
     const cap = await item('Капучино');
