@@ -75,7 +75,7 @@ describe('orders', () => {
     expect(res.body.total).toBe((cap.price + 300 + 350) * 2 + cro.price);
     expect(res.body.whatsapp.text).toContain('Стол 3');
     expect(res.body.whatsapp.text).toContain('Капучино');
-    expect(res.body.whatsapp.url).toMatch(/^https:\/\/wa\.me\/77000000000\?text=/);
+    expect(res.body.whatsapp.url).toMatch(/^https:\/\/wa\.me\/77776222053\?text=/);
     const st = await c.http.get(`/api/orders/${res.body.public_id}`).expect(200);
     expect(st.body.status).toBe('new');
     expect(st.body.table_number).toBe(3);

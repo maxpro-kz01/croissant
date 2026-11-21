@@ -11,9 +11,10 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  brand: { name: 'Croissant', instagram: 'croissant.maison', address: 'Кызылорда', phone: '' },
-  whatsapp_phone: '77000000000',
-  hours: { enabled: true, open: '08:00', close: '23:00', tz: 'Asia/Qyzylorda' },
+  brand: { name: 'Croissant', instagram: 'croissant.maison', address: 'Кызылорда, ул. Қараша 41а', phone: '+7 777 622 20 53' },
+  whatsapp_phone: '77776222053',
+  // 08:00–24:00: закрытие в полночь записывается как 00:00 (isOpenNow понимает переход через полночь)
+  hours: { enabled: true, open: '08:00', close: '00:00', tz: 'Asia/Qyzylorda' },
   delivery: { enabled: true, fee: 700, free_from: 8000, min_order: 2000 },
   pickup_enabled: true,
   payments: { cash: true, card_terminal: true, kaspi: true, online: true },
