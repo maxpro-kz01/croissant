@@ -1352,5 +1352,10 @@ a {
   height: calc((min(100vw, 760px) - 32px) * 0.625 - 38px);
 }
 
+/* «К столу»: вместо кнопки оформления — подпись для гостя */
+.waiter{display:flex;flex-direction:column;align-items:center;gap:2px;padding:14px 16px;border:2px solid var(--berry,#6B0A0A);border-radius:14px;color:var(--berry,#6B0A0A);text-align:center}
+.waiter strong{font-size:1.15rem;font-weight:700}
+.waiter span{font-size:.95rem;opacity:.85}
+
 /* Логотип: двойной тап открывает вход в админку, без зума и подсветки */
 .hero__logo{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}

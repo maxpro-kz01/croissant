@@ -13,7 +13,7 @@ export function deliveryFee(subtotal: number, s: PublicSettings['delivery']) {
 export function CartSheet({ open, onClose, settings }: { open: boolean; onClose: () => void; settings: PublicSettings | null }) {
   const t = useT();
   const navigate = useNavigate();
-  const { cart, lang, mode, changeQty, clearCart } = useApp();
+  const { cart, lang, mode, tableNumber, changeQty, clearCart } = useApp();
   const subtotal = cartSubtotal(cart);
   const fee = mode === 'delivery' && settings ? deliveryFee(subtotal, settings.delivery) : 0;
   const minOrder = mode === 'delivery' && settings ? settings.delivery.min_order : 0;
@@ -28,17 +28,27 @@ export function CartSheet({ open, onClose, settings }: { open: boolean; onClose:
         cart.length > 0 && (
           <>
             {tooLow && <p className="notice notice--err" style={{ margin: '0 0 10px' }}>{t('checkout.min_order', { sum: money(minOrder) })}</p>}
-            <button
-              type="button"
-              className="btn btn--berry btn--block"
-              disabled={tooLow}
-              onClick={() => {
-                onClose();
-                navigate('/checkout');
-              }}
-            >
-              {t('checkout.title')} · {money(subtotal + fee)}
-            </button>
+            {mode === 'dine_in' ? (
+              <div className="waiter" role="status">
+                <strong>{t('cart.show_waiter')}</strong>
+                <span>
+                  {tableNumber ? `${t('table.n', { n: tableNumber })} · ` : ''}
+                  {money(subtotal)}
+                </span>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn btn--berry btn--block"
+                disabled={tooLow}
+                onClick={() => {
+                  onClose();
+                  navigate('/checkout');
+                }}
+              >
+                {t('checkout.title')} · {money(subtotal + fee)}
+              </button>
+            )}
           </>
         )
       }

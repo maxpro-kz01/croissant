@@ -5,7 +5,7 @@ import { env } from '../config/env.js';
 import { migrate } from './migrate.js';
 import { createPool, type Db } from './pool.js';
 import { randomId } from '../utils/http.js';
-import { CROISSANT_DRINKS } from './drinks-data.js';
+import { CROISSANT_DRINKS, DRINK_PRICE_FIXES } from './drinks-data.js';
 import { CROISSANT_MENU, DISH_IMAGES } from './menu-data.js';
 
 /** Создаёт первого администратора, если пользователей ещё нет. */
@@ -217,6 +217,16 @@ export async function syncDrinks(db: Db) {
         }
       }
     }
+  }
+  // Поправки цен по печатному меню: только если цена ещё старая (правки из админки не трогаем).
+  for (const f of DRINK_PRICE_FIXES) {
+    const row = (await db.query('SELECT id FROM menu_items WHERE name_ru=$1 AND price=$2', [f.name, f.from])).rows[0];
+    if (!row) continue;
+    await db.query('UPDATE menu_items SET price=$1 WHERE id=$2', [f.to, row.id]);
+    await db.query(
+      `UPDATE modifiers SET price_delta=$1 WHERE price_delta=$2 AND group_id IN (SELECT id FROM modifier_groups WHERE item_id=$3)`,
+      [f.bigDelta.to, f.bigDelta.from, row.id],
+    );
   }
 }
 

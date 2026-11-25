@@ -57,6 +57,8 @@ export function CheckoutPage() {
   const chosen = payment && methods.includes(payment) ? payment : methods[0];
 
   if (cart.length === 0 && !placed.current) return <Navigate to="/" replace />;
+  // «К столу»: заказ не оформляется в приложении, гость показывает корзину официанту.
+  if (mode === 'dine_in' && !placed.current) return <Navigate to="/" replace />;
 
   const subtotal = cartSubtotal(cart);
   const fee = mode === 'delivery' && settings ? deliveryFee(subtotal, settings.delivery) : 0;

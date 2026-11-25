@@ -34,11 +34,11 @@ describe('menu', () => {
 });
 
 describe('напитки', () => {
-  it('syncDrinks добавляет 18+18 позиций один раз, у чая и лимонадов есть выбор объёма', async () => {
+  it('syncDrinks добавляет все 83 напитка один раз, у чая и лимонадов есть выбор объёма', async () => {
     await syncDrinks(c.db);
     await syncDrinks(c.db);
     const n = (await c.db.query(`SELECT count(*)::int AS n FROM menu_items WHERE image_url LIKE '/menu/drinks/%'`)).rows[0].n;
-    expect(n).toBe(36);
+    expect(n).toBe(83);
     const r = await c.http.get('/api/menu').expect(200);
     const items = r.body.categories.flatMap((x: any) => x.items);
     const tea = items.find((i: any) => i.name_ru === 'Масала');
@@ -49,6 +49,22 @@ describe('напитки', () => {
     expect(mojito.price).toBe(1390);
     expect(mojito.groups[0].modifiers.map((m: any) => m.price_delta)).toEqual([0, 1200]);
     expect(items.find((i: any) => i.name_ru === 'Juicy ball тропик').weight).toBe('0,4 л');
+    // позиции из печатного меню: фреши, горячий кофе с объёмом, чёрный чай
+    expect(items.find((i: any) => i.name_ru === 'Фреш апельсин').price).toBe(2390);
+    const cocoa = items.find((i: any) => i.name_ru === 'Какао');
+    expect(cocoa.price).toBe(1290);
+    expect(cocoa.weight).toBe('300 мл');
+    expect(items.find((i: any) => i.name_ru === 'Чёрный чай').groups[0].modifiers.map((m: any) => m.price_delta)).toEqual([0, 500]);
+    const glint = items.find((i: any) => i.name_ru === 'Глинтвейн');
+    expect(glint.price).toBe(1190);
+    expect(glint.groups[0].modifiers.map((m: any) => m.price_delta)).toEqual([0, 1200]);
+  });
+
+  it('поправка цены Глинтвейна меняет только старую цену и не трогает правки из админки', async () => {
+    const id = (await c.db.query(`SELECT id FROM menu_items WHERE name_ru='Глинтвейн'`)).rows[0].id;
+    await c.db.query(`UPDATE menu_items SET price=1300 WHERE id=$1`, [id]); // цена изменена вручную
+    await syncDrinks(c.db);
+    expect((await c.db.query(`SELECT price FROM menu_items WHERE id=$1`, [id])).rows[0].price).toBe(1300);
   });
 });
 
