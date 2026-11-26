@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, api, auth } from '../api';
 
-/** Подписка на события заказов (SSE). EventSource не умеет заголовки, поэтому токен идёт в query. */
+/**
+ * События заказов. Хостинг бессерверный (Vercel), поэтому вместо SSE админка каждые 4 секунды
+ * спрашивает у API «отпечаток» заказов и сообщает об изменениях: новый заказ или обновление.
+ */
 export function useStream(onEvent: (name: string, data: unknown) => void) {
   const handler = useRef(onEvent);
   useEffect(() => {
@@ -9,21 +12,27 @@ export function useStream(onEvent: (name: string, data: unknown) => void) {
   });
   const [live, setLive] = useState(false);
   useEffect(() => {
-    const token = auth.token;
-    if (!token) return;
-    const es = new EventSource(`/api/admin/stream?token=${encodeURIComponent(token)}`);
-    es.onopen = () => setLive(true);
-    es.onerror = () => setLive(false);
-    for (const name of ['order.created', 'order.updated']) {
-      es.addEventListener(name, (e) => {
-        try {
-          handler.current(name, JSON.parse((e as MessageEvent).data));
-        } catch {
-          handler.current(name, null);
-        }
-      });
-    }
-    return () => es.close();
+    if (!auth.token) return;
+    let prev: { maxId: number; last: string } | null = null;
+    let stopped = false;
+    const tick = async () => {
+      try {
+        const cur = await api.get<{ maxId: number; last: string }>('/api/admin/pulse');
+        if (stopped) return;
+        setLive(true);
+        if (prev && cur.maxId > prev.maxId) handler.current('order.created', { id: cur.maxId });
+        else if (prev && cur.last !== prev.last) handler.current('order.updated', null);
+        prev = cur;
+      } catch {
+        if (!stopped) setLive(false);
+      }
+    };
+    void tick();
+    const id = setInterval(() => void tick(), 4000);
+    return () => {
+      stopped = true;
+      clearInterval(id);
+    };
   }, []);
   return live;
 }

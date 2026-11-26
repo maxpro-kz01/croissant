@@ -34,3 +34,15 @@
 - Распечатайте QR из «Столы и QR» (после того, как задан итоговый `PUBLIC_URL`).
 - Сделайте тестовый заказ с телефона.
 - Настройте резервные копии базы.
+
+## Vercel + Neon (бесплатно, без «засыпания») — текущий вариант
+
+Сайт и API работают на Vercel, база — Neon (PostgreSQL).
+
+- Сайт собирается из `apps/web` (`npm run build`), API — одна функция `api/index.mjs`.
+- `api/index.mjs` — собранный бандл `apps/api/src/vercel.ts`. После любых изменений в `apps/api`
+  пересоберите его: `npm run build:vercel-api` и закоммитьте.
+- Переменные в Vercel: `NODE_ENV=production`, `DATABASE_URL` (строка Neon), `JWT_SECRET`,
+  `ADMIN_PASSWORD`, `PAYMENT_WEBHOOK_SECRET`, `PAYMENT_PROVIDER`, `PUBLIC_URL`, `CORS_ORIGIN`.
+- Миграции на функции не запускаются: новые миграции применяйте `DATABASE_URL=... npm run migrate`.
+- Вместо SSE админка раз в 4 секунды опрашивает `/api/admin/pulse` (на бессерверном хостинге SSE не держится).

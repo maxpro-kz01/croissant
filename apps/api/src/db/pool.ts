@@ -6,7 +6,7 @@ pg.types.setTypeParser(20, (v) => parseInt(v, 10));
 
 export type Db = pg.Pool;
 
-export function createPool(url = env.databaseUrl): Db {
+export function createPool(url = env.databaseUrl, max = 10): Db {
   const ssl = env.isProd && !/localhost|127\.0\.0\.1/.test(url) ? { rejectUnauthorized: false } : undefined;
-  return new pg.Pool({ connectionString: url, ssl, max: 10 });
+  return new pg.Pool({ connectionString: url, ssl, max });
 }

@@ -253,6 +253,14 @@ const paymentStatusSchema = z.object({ payment_status: z.enum(['unpaid', 'pendin
 export function adminOrdersRouter(db: Db, hub: Hub) {
   const r = Router();
   r.get('/stream', requireAuth(), (req, res) => hub.subscribe(req, res));
+  // Для бессерверного хостинга (Vercel): SSE там не держится, админка раз в несколько секунд
+  // спрашивает «отпечаток» заказов и перезагружает список, только если он изменился.
+  r.get('/pulse', requireAuth(), async (_req, res) => {
+    const row = (
+      await db.query(`SELECT COALESCE(MAX(id),0)::int AS max_id, COALESCE(MAX(updated_at), 'epoch')::text AS last FROM orders`)
+    ).rows[0] as { max_id: number; last: string };
+    res.set('Cache-Control', 'no-store').json({ maxId: row.max_id, last: row.last });
+  });
   r.use(['/orders', '/hall'], requireAuth());
 
   r.get('/orders', async (req, res) => {
