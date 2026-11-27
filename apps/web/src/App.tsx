@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { api } from './api';
 import { useApp } from './store';
+import { InstallPrompt } from './components/InstallPrompt';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { MenuPage } from './pages/MenuPage';
 import { MockPayPage } from './pages/MockPayPage';
@@ -43,6 +44,7 @@ export function App() {
         <Route path="/admin/*" element={<AdminRoutes />} />
         <Route path="*" element={<MenuPage />} />
       </Routes>
+      <InstallPrompt />
     </Suspense>
   );
 }

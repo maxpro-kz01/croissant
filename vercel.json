@@ -8,6 +8,6 @@
   "functions": { "api/index.mjs": { "maxDuration": 15 } },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index" },
-    { "source": "/((?!assets/|menu/|banners/|icon|logo|manifest).*)", "destination": "/index.html" }
+    { "source": "/((?!assets/|menu/|banners/|icon|logo|manifest|sw\\.js).*)", "destination": "/index.html" }
   ]
 }
